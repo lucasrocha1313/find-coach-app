@@ -1,4 +1,6 @@
-
+<template>
+  <div>Contact coach</div>
+</template>
 <script>
 export default {
   name: "ContactCoach"
