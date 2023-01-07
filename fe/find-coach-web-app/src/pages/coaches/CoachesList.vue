@@ -3,29 +3,33 @@
     Filter
   </section>
   <section>
-    <div class="controls">
-      <button>Refresh</button>
-      <router-link to="/register">Register as a coach</router-link>
-    </div>
-    <ul v-if="hasCoaches">
-      <coach-item v-for="coach in filteredCoaches" :key="coach.id"
-                  :id="coach.id"
-                  :first-name="coach.firstName"
-                  :last-name="coach.lastName"
-                  :areas="coach.areas"
-                  :rate="coach.hourlyRate"
-      />
-    </ul>
-    <h3 v-else>No coaches found</h3>
+    <base-card>
+      <div class="controls">
+        <base-button mode="outline">Refresh</base-button>
+        <base-button link to="/register">Register as a coach</base-button>
+      </div>
+      <ul v-if="hasCoaches">
+        <coach-item v-for="coach in filteredCoaches" :key="coach.id"
+                    :id="coach.id"
+                    :first-name="coach.firstName"
+                    :last-name="coach.lastName"
+                    :areas="coach.areas"
+                    :rate="coach.hourlyRate"
+        />
+      </ul>
+      <h3 v-else>No coaches found</h3>
+    </base-card>
   </section>
 </template>
 
 <script>
 import CoachItem from "@/components/coaches/CoachItem.vue";
+import BaseCard from "@/components/ui/BaseCard.vue";
+import BaseButton from "@/components/ui/BaseButton.vue";
 
 export default {
   name: "CoachesList",
-  components: {CoachItem},
+  components: {BaseButton, BaseCard, CoachItem},
   computed: {
     filteredCoaches() {
       return this.$store.getters['coaches/coaches']
