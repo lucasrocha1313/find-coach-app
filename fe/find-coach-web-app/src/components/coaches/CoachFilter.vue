@@ -1,9 +1,9 @@
 <template>
   <base-card>
-    <h2>Find your coach</h2>
-    <span v-for="area in filters" :key="area" class="filter-option">
-      <input type="checkbox" v-model="selected" :value="area" @change="changeSelection">
-      <label :for="area">{{area.toLowerCase()}}</label>
+    <h2>Find your coach by area</h2>
+    <span v-for="area in filters" :key="area.id" class="filter-option">
+      <input type="checkbox" v-model="selected" :value="area.id" :id="area.id" @change="changeSelection">
+      <label :for="area.id">{{area.name}}</label>
     </span>
   </base-card>
 </template>
@@ -24,7 +24,6 @@ export default {
   },
   methods: {
     changeSelection() {
-      console.log(this.selected)
       this.$emit('change-filter', this.selected)
     }
   }
