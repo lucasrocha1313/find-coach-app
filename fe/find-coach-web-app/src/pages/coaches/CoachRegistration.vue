@@ -2,7 +2,7 @@
   <section>
     <base-card>
       <h2>Register as a coach now!</h2>
-      <coach-form/>
+      <coach-form @register-coach="registerCoach"/>
     </base-card>
   </section>
 </template>
@@ -13,7 +13,13 @@ import BaseCard from "@/components/ui/BaseCard.vue";
 
 export default {
   name: "CoachRegistration",
-  components: {BaseCard, CoachForm}
+  components: {BaseCard, CoachForm},
+  methods: {
+    registerCoach(data) {
+      this.$store.dispatch('coaches/registerCoach', data)
+      this.$router.replace('/coaches')
+    }
+  }
 }
 </script>
 
