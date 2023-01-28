@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:5.7
+    container_name: db-find-coach      
+    ports:
+      - 3306:3306 
+    restart: always
+    volumes:
+      - dbvol:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: db_find_coach
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: coach@cool
+
+volumes:
+  dbvol:
