@@ -5,13 +5,11 @@ namespace FindCoachApi.Data;
 
 public class DataContext: DbContext
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
-    {
-        
-    }
+    public DataContext(DbContextOptions<DataContext> options) : base(options){}
 
     public DbSet<User> Users { get; set; }
     public DbSet<Coach> Coaches { get; set; }
+    public DbSet<AreaExpertise> AreasExpertise { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

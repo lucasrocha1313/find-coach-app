@@ -1,0 +1,61 @@
+using FindCoachApi.Controllers.Dtos;
+using FindCoachApi.Entities;
+using FindCoachApi.Enums;
+using FindCoachApi.Extensions;
+using FindCoachApi.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Extensions;
+
+namespace FindCoachApi.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class RegisterController
+{
+    private readonly IAuthService _authService;
+
+    public RegisterController(IAuthService authService)
+    {
+        _authService = authService;
+    }
+
+    [HttpPut]
+    public async Task Register([FromBody] RegisterDto registerDto)
+    {
+
+        //TODO try catch user already exists
+
+        if (registerDto.IsCoach)
+        {
+            if (!registerDto.IsValidCoach())
+            {
+                //TODO return bad request
+                return;
+            }
+            var coach = new Coach
+            {
+                UserName = registerDto.UserName,
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName,
+                HourlyRate = registerDto.HourlyRate.Value,
+                Description = registerDto.Description,
+                Areas = registerDto.IdsAreas.Select(id => new AreaExpertise
+                {
+                    Title = ((AreasExpertise)id).GetDescription(),
+                    Name = ((AreasExpertise)id).ToString().ToLower()
+                }).ToList()
+            };
+            await _authService.RegisterUser(coach);
+        }
+        else
+        {
+            var user = new User
+            {
+                UserName = registerDto.UserName,
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName
+            };
+            await _authService.RegisterUser(user);
+        }
+    }
+}

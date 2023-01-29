@@ -4,10 +4,10 @@ namespace FindCoachApi.Enums;
 
 public enum AreasExpertise
 {
-    [Description("Frontend")]
-    FRONTEND,
-    [Description("Backend")]
+    [Description("Frontend Development")]
+    FRONTEND = 1,
+    [Description("Backend Development")]
     BACKEND,
-    [Description("Career")]
+    [Description("Career Advisor")]
     CAREER
 }

@@ -1,4 +1,6 @@
 using FindCoachApi.Data;
+using FindCoachApi.Services;
+using FindCoachApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,9 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+//DI services
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 

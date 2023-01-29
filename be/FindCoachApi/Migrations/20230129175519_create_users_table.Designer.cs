@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FindCoachApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230128181547_create_users_table")]
+    [Migration("20230129175519_create_users_table")]
     partial class createuserstable
     {
         /// <inheritdoc />
@@ -21,6 +21,29 @@ namespace FindCoachApi.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("FindCoachApi.Entities.AreaExpertise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CoachId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoachId");
+
+                    b.ToTable("AreasExpertise");
+                });
 
             modelBuilder.Entity("FindCoachApi.Entities.User", b =>
                 {
@@ -34,15 +57,22 @@ namespace FindCoachApi.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("UserType")
                         .IsRequired()
@@ -61,9 +91,6 @@ namespace FindCoachApi.Migrations
                 {
                     b.HasBaseType("FindCoachApi.Entities.User");
 
-                    b.Property<int>("Areas")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
@@ -71,6 +98,18 @@ namespace FindCoachApi.Migrations
                         .HasColumnType("decimal(65,30)");
 
                     b.HasDiscriminator().HasValue("coach");
+                });
+
+            modelBuilder.Entity("FindCoachApi.Entities.AreaExpertise", b =>
+                {
+                    b.HasOne("FindCoachApi.Entities.Coach", null)
+                        .WithMany("Areas")
+                        .HasForeignKey("CoachId");
+                });
+
+            modelBuilder.Entity("FindCoachApi.Entities.Coach", b =>
+                {
+                    b.Navigation("Areas");
                 });
 #pragma warning restore 612, 618
         }
