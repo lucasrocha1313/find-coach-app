@@ -15,17 +15,18 @@ public class AuthService: IAuthService
         _logger = logger;
     }
 
-    public async Task RegisterUser(User user)
+    public async Task<User> RegisterUser(User user)
     {
         if (_context.Users.Any(u => u.UserName == user.UserName))
         {
             //TODO throw bad request exception
             _logger.LogWarning($"User with username {user.UserName} already exists");
-            return;
+            return null;
         }
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
+        return user;
     }
 
     public async Task ChangeToCoach(Coach coach)

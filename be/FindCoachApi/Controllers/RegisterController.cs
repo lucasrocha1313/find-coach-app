@@ -4,13 +4,12 @@ using FindCoachApi.Enums;
 using FindCoachApi.Extensions;
 using FindCoachApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Extensions;
 
 namespace FindCoachApi.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class RegisterController
+[Route("api/register")]
+public class RegisterController: ControllerBase
 {
     private readonly IAuthService _authService;
 
@@ -20,7 +19,7 @@ public class RegisterController
     }
 
     [HttpPut]
-    public async Task Register([FromBody] RegisterDto registerDto)
+    public async Task<ActionResult> Register([FromBody] RegisterDto registerDto)
     {
 
         //TODO try catch user already exists
@@ -30,7 +29,7 @@ public class RegisterController
             if (!registerDto.IsValidCoach())
             {
                 //TODO return bad request
-                return;
+                return BadRequest(registerDto);
             }
             var coach = new Coach
             {
@@ -46,16 +45,17 @@ public class RegisterController
                 }).ToList()
             };
             await _authService.RegisterUser(coach);
+            
+            return Ok(coach);
         }
-        else
+
+        var user = new User
         {
-            var user = new User
-            {
-                UserName = registerDto.UserName,
-                FirstName = registerDto.FirstName,
-                LastName = registerDto.LastName
-            };
-            await _authService.RegisterUser(user);
-        }
+            UserName = registerDto.UserName,
+            FirstName = registerDto.FirstName,
+            LastName = registerDto.LastName
+        };
+        await _authService.RegisterUser(user);
+        return Ok(user);
     }
 }

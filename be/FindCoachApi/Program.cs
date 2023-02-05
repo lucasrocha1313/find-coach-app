@@ -4,7 +4,7 @@ using FindCoachApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddCors();
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -29,6 +29,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors(builder => builder.AllowAnyHeader()
+    .AllowAnyMethod()
+    .WithOrigins("http://localhost:8080"));
 
 app.UseAuthorization();
 
