@@ -13,7 +13,7 @@
                     :id="coach.id"
                     :first-name="coach.firstName"
                     :last-name="coach.lastName"
-                    :areas="coach.areas"
+                    :areas="coach.areas.map(a => a.name.toLowerCase())"
                     :rate="coach.hourlyRate"
         />
       </ul>
@@ -39,7 +39,7 @@ export default {
   computed: {
     filteredCoaches() {
       const coaches = this.$store.getters['coaches/coaches']
-      return coaches.filter(c => this.activeFilters.length === 0 || c.areas.some(a => this.activeFilters.includes(a)))
+      return coaches.filter(c => this.activeFilters.length === 0 || c.areas.some(a => this.activeFilters.map(a => a.toLowerCase()).includes(a.name.toLowerCase())))
     },
     hasCoaches() {
       return this.$store.getters['coaches/hasCoaches']

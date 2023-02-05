@@ -1,5 +1,9 @@
 <template>
   <form @submit.prevent="submitForm">
+    <div class="form-control" :class="{invalid: !username.isValid}">
+      <label for="username">Username</label>
+      <input type="text" id="username" v-model="username.value" @blur="clearValidity('username')">
+    </div>
     <div class="form-control" :class="{invalid: !firstName.isValid}">
       <label for="firstname">Firstname</label>
       <input type="text" id="firstname" v-model="firstName.value" @blur="clearValidity('firstName')">
@@ -38,6 +42,10 @@ export default {
   components: {BaseButton},
   data() {
     return {
+      username: {
+        value: '',
+        isValid: true
+      },
       firstName: {
         value: '',
         isValid: true
@@ -100,6 +108,7 @@ export default {
       }
 
       const formData = {
+        username: this.username.value,
         first: this.firstName.value,
         last: this.lastName.value,
         desc: this.description.value,

@@ -1,16 +1,16 @@
 export const mapAreas = {
     frontend: {
-        id: 'frontend',
+        id: '1',
         name: 'Frontend',
         title: 'Frontend Development'
     },
     backend: {
-        id: 'backend',
+        id: '2',
         name: 'Backend',
         title: 'Backend Development'
     },
     career: {
-        id: 'career',
+        id: '3',
         name: 'Career',
         title: 'Career Advisory'
     }
