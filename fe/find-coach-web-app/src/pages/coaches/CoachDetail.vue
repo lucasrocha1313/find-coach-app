@@ -1,5 +1,5 @@
 <template>
-  <pulse-loader v-if="loading" :loading="loading" :color="color" :size="size"></pulse-loader>
+  <base-spinner v-if="isLoading"/>
   <div v-else>
     <section>
       <base-card>
@@ -28,15 +28,16 @@
 import BaseCard from "@/components/ui/BaseCard.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import BaseBadge from "@/components/ui/BaseBadge.vue";
+import BaseSpinner from "@/components/ui/BaseSpinner.vue";
 
 export default {
   name: "CoachDetail",
-  components: {BaseBadge, BaseButton, BaseCard},
+  components: {BaseSpinner, BaseBadge, BaseButton, BaseCard},
   props: ['id'],
   data() {
     return {
       selectedCoach: null,
-      loading: false
+      isLoading: false
     }
   },
   computed: {
@@ -58,9 +59,9 @@ export default {
     }
   },
   async created() {
-    this.loading = true
+    this.isLoading = true
     this.selectedCoach = await this.$store.getters['coaches/coach'](this.id)
-    this.loading = false
+    this.isLoading = false
   }
 }
 </script>

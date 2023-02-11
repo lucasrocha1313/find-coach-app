@@ -5,12 +5,14 @@
   <section>
     <base-card>
       <div class="controls">
-        <base-button mode="outline">Refresh</base-button>
+        <base-button mode="outline" @click="getCoaches">Refresh</base-button>
         <base-button link to="/register">Register as a coach</base-button>
       </div>
-      <pulse-loader v-if="loading" :loading="loading" :color="color" :size="size"></pulse-loader>
-      <div v-else>
-        <ul v-if="this.coaches.length > 0">
+      <div>
+        <div v-if="isLoading">
+          <base-spinner></base-spinner>
+        </div>
+        <ul v-else-if="this.coaches.length > 0">
           <coach-item v-for="coach in filteredCoaches" :key="coach.id"
                       :id="coach.id"
                       :first-name="coach.firstName"
@@ -30,15 +32,15 @@ import CoachItem from "@/components/coaches/CoachItem.vue";
 import BaseCard from "@/components/ui/BaseCard.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import CoachFilter from "@/components/coaches/CoachFilter.vue";
-import { PulseLoader } from 'vue-spinner/dist/vue-spinner.min'
+import BaseSpinner from "@/components/ui/BaseSpinner.vue";
 
 export default {
   name: "CoachesList",
-  components: {CoachFilter, BaseButton, BaseCard, CoachItem, PulseLoader},
+  components: {BaseSpinner, CoachFilter, BaseButton, BaseCard, CoachItem},
   data(){
     return {
       activeFilters:[],
-      loading: false,
+      isLoading: false,
       coaches: []
     }
   },
@@ -55,11 +57,10 @@ export default {
       this.activeFilters = updatedFilters
     },
     async getCoaches() {
-      this.loading = true
+      this.isLoading = true
       this.coaches =  await this.$store.getters['coaches/coaches']
       this.$store.dispatch('coaches/addCoachesToStore', this.coaches)
-
-      this.loading = false
+      this.isLoading = false
     }
   }
 }
