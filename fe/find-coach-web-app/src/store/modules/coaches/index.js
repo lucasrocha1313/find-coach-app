@@ -36,6 +36,10 @@ export default {
     getters: {
         async coaches() {
             const result = await axios.get('https://localhost:7129/api/coaches')
+            if(result.status !== 200) {
+                const error = new Error(`Failed to fetch with status ${result.status}: ${result.statusText}`)
+                throw error
+            }
             return result.data
         },
         coach: (state) => async (id) => {

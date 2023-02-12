@@ -1,4 +1,7 @@
 <template>
+  <base-dialog :show="!!error" title="A error occurred" @click="handleError">
+    <p>{{ error }}</p>
+  </base-dialog>
   <section>
     <coach-filter @change-filter="setFilters"/>
   </section>
@@ -33,15 +36,17 @@ import BaseCard from "@/components/ui/BaseCard.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import CoachFilter from "@/components/coaches/CoachFilter.vue";
 import BaseSpinner from "@/components/ui/BaseSpinner.vue";
+import BaseDialog from "@/components/ui/BaseDialog.vue";
 
 export default {
   name: "CoachesList",
-  components: {BaseSpinner, CoachFilter, BaseButton, BaseCard, CoachItem},
+  components: {BaseDialog, BaseSpinner, CoachFilter, BaseButton, BaseCard, CoachItem},
   data(){
     return {
       activeFilters:[],
       isLoading: false,
-      coaches: []
+      coaches: [],
+      error: null
     }
   },
   async created() {
@@ -53,13 +58,21 @@ export default {
     }
   },
   methods: {
+    handleError() {
+      this.error = null
+    },
     setFilters(updatedFilters) {
       this.activeFilters = updatedFilters
     },
     async getCoaches() {
       this.isLoading = true
-      this.coaches =  await this.$store.getters['coaches/coaches']
-      this.$store.dispatch('coaches/addCoachesToStore', this.coaches)
+      try {
+        this.coaches =  await this.$store.getters['coaches/coaches']
+        this.$store.dispatch('coaches/addCoachesToStore', this.coaches)
+      } catch (error) {
+        this.error = error.message || 'Something went wrong!'
+      }
+
       this.isLoading = false
     }
   }
