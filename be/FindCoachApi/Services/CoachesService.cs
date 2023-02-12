@@ -5,13 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FindCoachApi.Services;
 
-public class CoachesService: ICoachesService
+public class Coaches: ServiceBase, ICoachesService
 {
-    private readonly DataContext _context;
 
-    public CoachesService(DataContext context)
+    public Coaches(DataContext context): base(context)
     {
-        _context = context;
     }
 
     public async Task<List<Coach>> GetCoaches()
@@ -19,8 +17,13 @@ public class CoachesService: ICoachesService
         return await _context.Coaches.Include(c => c.Areas).ToListAsync();
     }
 
-    public async Task<Coach> GetCoachById(int id)
+    public async Task<Coach?> GetCoachById(int id)
     {
-        return await _context.Coaches.Include(c => c.Areas).FirstAsync(c => c.Id == id);
+        return await _context.Coaches.Include(c => c.Areas).FirstOrDefaultAsync(c => c.Id == id);
+    }
+
+    public async Task<bool> IsCoachRegistered(int id)
+    {
+        return await _context.Coaches.AnyAsync(c => c.Id == id);
     }
 }

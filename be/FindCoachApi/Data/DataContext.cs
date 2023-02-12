@@ -10,6 +10,7 @@ public class DataContext: DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Coach> Coaches { get; set; }
     public DbSet<AreaExpertise> AreasExpertise { get; set; }
+    public DbSet<Request> Requests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -17,5 +18,7 @@ public class DataContext: DbContext
                     .HasDiscriminator<string>("UserType")
                     .HasValue<User>("user")
                     .HasValue<Coach>("coach");
+        
+        modelBuilder.Entity<Request>().HasKey(r => new { r.Id, r.CoachId });
     }
 }

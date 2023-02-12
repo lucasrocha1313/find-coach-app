@@ -4,14 +4,12 @@ using FindCoachApi.Services.Interfaces;
 
 namespace FindCoachApi.Services;
 
-public class AuthService: IAuthService
+public class Auth: ServiceBase, IAuthService
 {
-    private readonly DataContext _context;
-    private readonly ILogger<AuthService> _logger;
+    private readonly ILogger<Auth> _logger;
 
-    public AuthService(DataContext context, ILogger<AuthService> logger)
+    public Auth(DataContext context, ILogger<Auth> logger): base(context)
     {
-        _context = context;
         _logger = logger;
     }
 

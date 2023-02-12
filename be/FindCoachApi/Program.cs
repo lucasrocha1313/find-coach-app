@@ -17,8 +17,9 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 //DI services
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICoachesService, CoachesService>();
+builder.Services.AddScoped<IAuthService, Auth>();
+builder.Services.AddScoped<ICoachesService, Coaches>();
+builder.Services.AddScoped<IRequestService, Request>();
 
 var app = builder.Build();
 
