@@ -20,7 +20,10 @@
 </template>
 
 <script>
+import BaseButton from "@/components/ui/BaseButton.vue";
+
 export default {
+  components: {BaseButton},
   props: {
     show: {
       type: Boolean,

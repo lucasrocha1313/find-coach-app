@@ -22,7 +22,7 @@ export default {
 
             const response = await axios.post(`${process.env.VUE_APP_API_URL}/requests`, newRequest)
             if(response.status !== 200) {
-                throw new Error(`Failed to fetch with status ${response.status}: ${response.statusText}`)
+                throw new Error(`Failed to post requests to coach with status ${response.status}: ${response.statusText}`)
             }
             context.commit('addRequest', response.data)
         }
@@ -30,6 +30,9 @@ export default {
     getters: {
         async requests(state, _, _2, rootGetters) {
             const response = await axios.get(`${process.env.VUE_APP_API_URL}/requests/${rootGetters.userId}`)
+            if(response.status !== 200) {
+                throw new Error(`Failed to fetch requests to coach with status ${response.status}: ${response.statusText}`)
+            }
             return response.data
         }
     }

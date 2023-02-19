@@ -39,7 +39,7 @@ export default {
             debugger
             const result = await axios.get(`${process.env.VUE_APP_API_URL}/coaches`)
             if(result.status !== 200) {
-                throw new Error(`Failed to fetch with status ${result.status}: ${result.statusText}`)
+                throw new Error(`Failed to fetch coaches with status ${result.status}: ${result.statusText}`)
             }
             return result.data
         },
@@ -48,6 +48,9 @@ export default {
             debugger
             if(state.coaches.some(c => c.id === Number(id))) return state.coaches.find(c => c.id === Number(id))
             const result = await axios.get(`${process.env.APP_API_URL}/coaches/${id}`)
+            if(result.status !== 200) {
+                throw new Error(`Failed to fetch coach with status ${result.status}: ${result.statusText}`)
+            }
             return result.data
         }
     }
