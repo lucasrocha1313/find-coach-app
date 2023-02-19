@@ -26,7 +26,7 @@ export default {
                 isCoach: true,
                 idsAreas: data.areas.map(a => a)
             }
-            const result = await axios.put('https://localhost:7129/api/register', coachData)
+            const result = await axios.put(`${process.env.VUE_APP_API_URL}/register`, coachData)
             context.commit('registerCoach', result.data)
         },
         addCoachesToStore(context, data) {
@@ -35,10 +35,11 @@ export default {
     },
     getters: {
         async coaches() {
-            const result = await axios.get('https://localhost:7129/api/coaches')
+            // eslint-disable-next-line no-debugger
+            debugger
+            const result = await axios.get(`${process.env.VUE_APP_API_URL}/coaches`)
             if(result.status !== 200) {
-                const error = new Error(`Failed to fetch with status ${result.status}: ${result.statusText}`)
-                throw error
+                throw new Error(`Failed to fetch with status ${result.status}: ${result.statusText}`)
             }
             return result.data
         },
@@ -46,7 +47,7 @@ export default {
             // eslint-disable-next-line no-debugger
             debugger
             if(state.coaches.some(c => c.id === Number(id))) return state.coaches.find(c => c.id === Number(id))
-            const result = await axios.get(`https://localhost:7129/api/coaches/${id}`)
+            const result = await axios.get(`${process.env.APP_API_URL}/coaches/${id}`)
             return result.data
         }
     }

@@ -4,8 +4,11 @@
      <header>
        <h2>Request received</h2>
      </header>
-     <ul v-if="hasRequests">
-       <request-item v-for="req in receivedRequests" :key="req.id" :email="req.userEmail" :message="req.message"/>
+     <div  v-if="isLoading">
+       <base-spinner></base-spinner>
+     </div>
+     <ul v-else-if="requests.length > 0">
+       <request-item v-for="req in requests" :key="req.id" :email="req.userEmail" :message="req.message"/>
      </ul>
      <h3 v-else>You haven't received any request yet!</h3>
    </base-card>
@@ -15,16 +18,30 @@
 <script>
 import BaseCard from "@/components/ui/BaseCard.vue";
 import RequestItem from "@/components/requests/RequestItem.vue";
+import BaseSpinner from "@/components/ui/BaseSpinner.vue";
 
 export default {
   name: "RequestReceived",
-  components: {RequestItem, BaseCard},
+  components: {BaseSpinner, RequestItem, BaseCard},
+  data() {
+    return {
+      isLoading: false,
+      requestsLoaded: []
+    }
+  },
+  async mounted() {
+    await this.receivedRequests()
+  },
+  methods: {
+    async receivedRequests() {
+      this.isLoading=true
+      this.requestsLoaded =  await this.$store.getters['requests/requests']
+      this.isLoading=false
+    }
+  },
   computed: {
-    receivedRequests() {
-      return this.$store.getters['requests/requests']
-    },
-    hasRequests() {
-      return this.$store.getters['requests/hasRequests']
+    requests() {
+      return this.requestsLoaded
     }
   }
 }

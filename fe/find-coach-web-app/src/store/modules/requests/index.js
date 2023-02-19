@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export default {
     namespaced: true,
     state() {
@@ -11,22 +13,24 @@ export default {
         }
     },
     actions: {
-        contactCoach(context, payload) {
+        async contactCoach(context, payload) {
             const newRequest = {
-                id: new Date().toISOString(),
                 coachId: payload.coachId,
                 userEmail: payload.email,
                 message: payload.message
             }
-            context.commit('addRequest', newRequest)
+
+            const response = await axios.post(`${process.env.VUE_APP_API_URL}/requests`, newRequest)
+            if(response.status !== 200) {
+                throw new Error(`Failed to fetch with status ${response.status}: ${response.statusText}`)
+            }
+            context.commit('addRequest', response.data)
         }
     },
     getters: {
-        requests(state, _, _2, rootGetters) {
-            return state.requests.filter( req => req.coachId === rootGetters.userId)
-        },
-        hasRequests(_, getters) {
-            return getters.requests && getters.requests.length > 0
+        async requests(state, _, _2, rootGetters) {
+            const response = await axios.get(`${process.env.VUE_APP_API_URL}/requests/${rootGetters.userId}`)
+            return response.data
         }
     }
 }
