@@ -19,7 +19,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 //DI services
 builder.Services.AddScoped<IAuthService, Auth>();
 builder.Services.AddScoped<ICoachesService, Coaches>();
-builder.Services.AddScoped<IRequestService, Request>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 
 var app = builder.Build();
 

@@ -45,8 +45,8 @@ public class RequestController: ControllerBase
             Message = requestToAdd.Message
         };
 
-        await _requestService.AddRequest(request);
-        return Ok("Request saved!");
+        var savedRequest = await _requestService.AddRequest(request);
+        return Ok(savedRequest);
     }
     
     
