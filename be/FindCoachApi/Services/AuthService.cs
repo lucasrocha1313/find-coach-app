@@ -1,16 +1,25 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using FindCoachApi.Data;
 using FindCoachApi.Entities;
 using FindCoachApi.Services.Interfaces;
+using System.Security.Cryptography;
+using System.Text;
+using FindCoachApi.Exceptions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FindCoachApi.Services;
 
-public class Auth: ServiceBase, IAuthService
+public class AuthService: ServiceBase, IAuthService
 {
     private readonly ILogger<Auth> _logger;
+    private readonly IConfiguration _config;
 
-    public Auth(DataContext context, ILogger<Auth> logger): base(context)
+    public AuthService(DataContext context, ILogger<Auth> logger, IConfiguration config): base(context)
     {
         _logger = logger;
+        _config = config;
     }
 
     public async Task<User> RegisterUser(User user)
@@ -41,5 +50,72 @@ public class Auth: ServiceBase, IAuthService
         coachOnDatabase.Areas = coach.Areas;
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<string?> Login(string email, string password)
+    {
+        var auth = await _context.Auths.FirstOrDefaultAsync(c => c.Email == email);
+        if (auth == null || !VerifyPasswordHash(password, auth.PasswordHash, auth.PasswordSalt))
+            return null;
+
+        return GenerateToken(email);
+    }
+
+    public async Task SignUp(string email, string password)
+    {
+        if (_context.Auths.Any(a => a.Email == email))
+        {
+            throw new UserAlreadyExistsException("Email Already used");
+        }
+        CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
+
+        var auth = new Auth
+        {
+            Email = email,
+            PasswordHash = passwordHash,
+            PasswordSalt = passwordSalt
+        };
+
+        _context.Auths.Add(auth);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<Auth?> GetAuthByEmailAsync(string email)
+    {
+        return await _context.Auths.FirstOrDefaultAsync(a => a.Email == email);
+    }
+    
+    private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+    {
+        using var hmac = new HMACSHA512();
+        passwordSalt = hmac.Key;
+        passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+    }
+
+    private static bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+    {
+        using var hmac = new HMACSHA512(passwordSalt);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+        return computedHash.SequenceEqual(passwordHash);
+    }
+
+    private string? GenerateToken(string email)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_config.GetSection("Token").Value);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new Claim[]
+            {
+                new(ClaimTypes.Email, email)
+            }),
+            Expires = DateTime.UtcNow.AddDays(1),
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+        };
+
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
     }
 }

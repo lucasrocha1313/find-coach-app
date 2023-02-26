@@ -11,6 +11,7 @@ public class DataContext: DbContext
     public DbSet<Coach> Coaches { get; set; }
     public DbSet<AreaExpertise> AreasExpertise { get; set; }
     public DbSet<Request> Requests { get; set; }
+    public DbSet<Auth> Auths { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,5 +21,10 @@ public class DataContext: DbContext
                     .HasValue<Coach>("coach");
         
         modelBuilder.Entity<Request>().HasKey(r => new { r.Id, r.CoachId });
+
+        modelBuilder.Entity<Auth>()
+            .HasOne(a => a.User)
+            .WithOne(u => u.Auth)
+            .HasForeignKey<User>(u => u.AuthId);
     }
 }

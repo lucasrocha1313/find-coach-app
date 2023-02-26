@@ -1,4 +1,5 @@
 using FindCoachApi.Data;
+using FindCoachApi.Helpers;
 using FindCoachApi.Services;
 using FindCoachApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 //DI services
-builder.Services.AddScoped<IAuthService, Auth>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICoachesService, Coaches>();
 builder.Services.AddScoped<IRequestService, RequestService>();
 
@@ -30,6 +31,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseHttpsRedirection();
 
 app.UseRouting();
@@ -39,6 +41,8 @@ app.UseCors(builder => builder.AllowAnyHeader()
     .WithOrigins("http://localhost:8080"));
 
 app.UseAuthorization();
+
+app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
 

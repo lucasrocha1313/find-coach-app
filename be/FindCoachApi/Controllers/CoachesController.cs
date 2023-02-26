@@ -1,4 +1,5 @@
 using FindCoachApi.Entities;
+using FindCoachApi.Helpers;
 using FindCoachApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
