@@ -2,6 +2,7 @@ using FindCoachApi.Controllers.Dtos;
 using FindCoachApi.Entities;
 using FindCoachApi.Enums;
 using FindCoachApi.Extensions;
+using FindCoachApi.Helpers;
 using FindCoachApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ public class RegisterController: ControllerBase
         _authService = authService;
     }
 
+    [Authorize]
     [HttpPut]
     public async Task<ActionResult> Register([FromBody] RegisterDto registerDto)
     {

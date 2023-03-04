@@ -5,6 +5,7 @@ using FindCoachApi.Entities;
 using FindCoachApi.Services.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
+using FindCoachApi.Controllers.Dtos;
 using FindCoachApi.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -52,13 +53,22 @@ public class AuthService: ServiceBase, IAuthService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<string?> Login(string email, string password)
+    public async Task<AuthResponseDto?> Login(string email, string password)
     {
         var auth = await _context.Auths.FirstOrDefaultAsync(c => c.Email == email);
-        if (auth == null || !VerifyPasswordHash(password, auth.PasswordHash, auth.PasswordSalt))
+        if (auth == null)
             return null;
 
-        return GenerateToken(email);
+        if (!VerifyPasswordHash(password, auth.PasswordHash, auth.PasswordSalt))
+        {
+            throw new InvalidLoginCredential("Credentials not valid!");
+        }
+
+        return new AuthResponseDto
+        {
+            AuthId = auth.Id,
+            Token = GenerateToken(email) ?? ""
+        };
     }
 
     public async Task SignUp(string email, string password)

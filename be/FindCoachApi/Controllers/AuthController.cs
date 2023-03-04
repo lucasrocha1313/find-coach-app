@@ -17,12 +17,13 @@ namespace FindCoachApi.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<ActionResult> AuthUser(AuthDto auth)
+        public async Task<ActionResult<AuthResponseDto>> AuthUser(AuthDto auth)
         {
             try
             {
                 await _authService.SignUp(auth.Email, auth.Password);
-                return Ok("User signed up successfully");
+                var authResponse = await _authService.Login(auth.Email, auth.Password);
+                return Ok(authResponse);
             }
             catch (UserAlreadyExistsException e)
             {
@@ -30,14 +31,21 @@ namespace FindCoachApi.Controllers
             }
         }
 
-        [HttpGet("login")]
-        public async Task<ActionResult<string>> Login(string email, string password)
+        [HttpPost("login")]
+        public async Task<ActionResult<AuthResponseDto>> Login(AuthDto auth)
         {
-            var token = await _authService.Login(email, password);
-            if (token == null)
-                return BadRequest("Something went wrong");
+            try
+            {
+                var authResponse = await _authService.Login(auth.Email, auth.Password);
+                if (authResponse == null)
+                    return BadRequest("Something went wrong");
 
-            return Ok(token);
+                return Ok(authResponse);
+            }
+            catch (InvalidLoginCredential e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

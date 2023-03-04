@@ -1,7 +1,9 @@
 using FindCoachApi.Controllers.Dtos;
 using FindCoachApi.Entities;
+using FindCoachApi.Helpers;
 using FindCoachApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace FindCoachApi.Controllers;
 
@@ -17,7 +19,8 @@ public class RequestController: ControllerBase
         _requestService = requestService;
         _coachesService = coachesService;
     }
-
+    
+    [Authorize]
     [HttpGet("{coachId:int}")]
     public async Task<ActionResult<List<Request>>> GetRequestsByCoachId(int coachId)
     {
@@ -29,7 +32,8 @@ public class RequestController: ControllerBase
         var requests = await _requestService.GetRequestsByCoachId(coachId);
         return Ok(requests);
     }
-
+    
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult> AddRequestToCoach(RequestToAddDto requestToAdd)
     {
