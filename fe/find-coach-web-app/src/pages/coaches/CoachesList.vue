@@ -39,16 +39,17 @@ import BaseButton from "@/components/ui/BaseButton.vue";
 import CoachFilter from "@/components/coaches/CoachFilter.vue";
 import BaseSpinner from "@/components/ui/BaseSpinner.vue";
 import BaseDialog from "@/components/ui/BaseDialog.vue";
+import ErrorMixin from "@/mixins/ErrorMixin.vue";
 
 export default {
   name: "CoachesList",
   components: {BaseDialog, BaseSpinner, CoachFilter, BaseButton, BaseCard, CoachItem},
+  mixins: [ErrorMixin],
   data(){
     return {
       activeFilters:[],
       isLoading: false,
-      coaches: [],
-      error: null
+      coaches: []
     }
   },
   async created() {
@@ -60,9 +61,6 @@ export default {
     }
   },
   methods: {
-    handleError() {
-      this.error = null
-    },
     setFilters(updatedFilters) {
       this.activeFilters = updatedFilters
     },

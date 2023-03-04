@@ -35,8 +35,6 @@ export default {
     },
     getters: {
         async coaches() {
-            // eslint-disable-next-line no-debugger
-            debugger
             const result = await axios.get(`${process.env.VUE_APP_API_URL}/coaches`)
             if(result.status !== 200) {
                 throw new Error(`Failed to fetch coaches with status ${result.status}: ${result.statusText}`)
@@ -44,8 +42,6 @@ export default {
             return result.data
         },
         coach: (state) => async (id) => {
-            // eslint-disable-next-line no-debugger
-            debugger
             if(state.coaches.some(c => c.id === Number(id))) return state.coaches.find(c => c.id === Number(id))
             const result = await axios.get(`${process.env.APP_API_URL}/coaches/${id}`)
             if(result.status !== 200) {

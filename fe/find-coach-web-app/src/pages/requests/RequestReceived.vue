@@ -1,6 +1,9 @@
 <template>
   <div>
-    <section>
+    <base-dialog :show="!!error" title="A error occurred" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
+    <section v-if="!error">
       <base-card>
         <header>
           <h2>Request received</h2>
@@ -8,7 +11,7 @@
         <div  v-if="isLoading">
           <base-spinner></base-spinner>
         </div>
-        <ul v-else-if="requests.length > 0">
+        <ul v-else-if="requests?.length > 0">
           <request-item v-for="req in requests" :key="req.id" :email="req.userEmail" :message="req.message"/>
         </ul>
         <h3 v-else>You haven't received any request yet!</h3>
@@ -21,10 +24,13 @@
 import BaseCard from "@/components/ui/BaseCard.vue";
 import RequestItem from "@/components/requests/RequestItem.vue";
 import BaseSpinner from "@/components/ui/BaseSpinner.vue";
+import ErrorMixin from "@/mixins/ErrorMixin.vue";
+import BaseDialog from "@/components/ui/BaseDialog.vue";
 
 export default {
   name: "RequestReceived",
-  components: {BaseSpinner, RequestItem, BaseCard},
+  components: {BaseDialog, BaseSpinner, RequestItem, BaseCard},
+  mixins: [ErrorMixin],
   data() {
     return {
       isLoading: false,
@@ -37,7 +43,12 @@ export default {
   methods: {
     async receivedRequests() {
       this.isLoading=true
-      this.requestsLoaded =  await this.$store.getters['requests/requests']
+      try{
+        this.requestsLoaded =  await this.$store.getters['requests/requests']
+      } catch (err) {
+        this.error = err.message || 'Something went wrong!'
+      }
+
       this.isLoading=false
     }
   },

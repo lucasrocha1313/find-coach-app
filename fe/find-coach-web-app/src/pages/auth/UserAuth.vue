@@ -3,6 +3,9 @@
     <base-dialog :show="!!error" title="A error occurred" @close="handleError">
       <p>{{ error }}</p>
     </base-dialog>
+    <base-dialog :show="isLoading" title="Authenticating..." fixed>
+      <base-spinner></base-spinner>
+    </base-dialog>
     <base-card>
       <form @submit.prevent="submitForm">
         <div class="form-control">
@@ -25,43 +28,46 @@
 import BaseButton from "@/components/ui/BaseButton.vue";
 import BaseCard from "@/components/ui/BaseCard.vue";
 import BaseDialog from "@/components/ui/BaseDialog.vue";
+import BaseSpinner from "@/components/ui/BaseSpinner.vue";
+import ErrorMixin from "@/mixins/ErrorMixin.vue";
 
 export default {
   name: "UserAuth",
-  components: {BaseCard, BaseButton, BaseDialog},
+  mixins: [ErrorMixin],
+  components: {BaseSpinner, BaseCard, BaseButton, BaseDialog},
   data() {
     return {
       email: '',
       password: '',
       mode:'login',
-      error: null
+      isLoading: false
     }
   },
   methods: {
     async submitForm(){
       if(!this.isFormValid) return
-
-      if(this.mode === 'login') {
-        //TODO send login request
-      } else {
-        try {
-          await this.$store.dispatch('signup', {
-            email: this.email,
-            password: this.password
-          })
+      this.isLoading = true
+      try{
+        const payload = {
+          email: this.email,
+          password: this.password
+        }
+        if(this.mode === 'login') {
+          await this.$store.dispatch('login', payload)
+        } else {
+          await this.$store.dispatch('signup', payload)
           //TODO change backend to log the user in after signup
           this.mode = 'login'
-        } catch (error) {
-          this.error = error.message || 'Something went wrong!'
         }
+      }catch (error) {
+        this.error = error.message || 'Something went wrong!'
       }
+
+      this.isLoading = false
     },
     switchAuthMode(){
       this.mode = this.mode==='login' ? 'signup' : 'login'
-    },
-    handleError() {
-      this.error = null
-    },
+    }
   },
   computed: {
     isEmailValid() {
