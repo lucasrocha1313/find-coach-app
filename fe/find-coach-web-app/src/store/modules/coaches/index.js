@@ -18,6 +18,7 @@ export default {
     actions: {
         async registerCoach(context, data) {
             const coachData = {
+                authId: data.authId,
                 username: data.username,
                 firstName: data.first,
                 lastName: data.last,
@@ -26,8 +27,25 @@ export default {
                 isCoach: true,
                 idsAreas: data.areas.map(a => a)
             }
-            const result = await axios.put(`${process.env.VUE_APP_API_URL}/register`, coachData)
-            context.commit('registerCoach', result.data)
+            try {
+                const result = await axios.put(`${process.env.VUE_APP_API_URL}/register`, coachData,
+                    {
+                        headers: { Authorization: `Bearer ${data.token}` }
+                    })
+                // eslint-disable-next-line no-debugger
+                debugger
+                context.commit('registerCoach', result.data)
+            } catch (error) {
+                // eslint-disable-next-line no-debugger
+                debugger
+                if(error.response.status === 401) {
+                    context.rootState.isAuthenticated = false
+                    throw new Error(`User is not authorized to register coach`)
+                }
+
+                throw new Error(`Failed to register coach with status ${error.response.status}: ${error.response.statusText}`)
+            }
+
         },
         addCoachesToStore(context, data) {
             context.commit('initCoaches', data)

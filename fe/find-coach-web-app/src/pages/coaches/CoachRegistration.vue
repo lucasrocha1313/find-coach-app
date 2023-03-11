@@ -16,6 +16,8 @@ export default {
   components: {BaseCard, CoachForm},
   methods: {
     registerCoach(data) {
+      data.authId = this.$store.getters.userId
+      data.token = this.$store.getters.token
       this.$store.dispatch('coaches/registerCoach', data)
       this.$router.replace('/coaches')
     }

@@ -10,7 +10,8 @@
       <base-card>
         <div class="controls">
           <base-button mode="outline" @click="getCoaches">Refresh</base-button>
-          <base-button link to="/register">Register as a coach</base-button>
+          <base-button v-if="isAuthenticated && !isCoach && !isLoading" link to="/register">Register as a coach</base-button>
+          <base-button link to="/auth" v-if="!isAuthenticated">Login</base-button>
         </div>
         <div>
           <div v-if="isLoading">
@@ -56,6 +57,12 @@ export default {
     await this.getCoaches()
   },
   computed: {
+    isCoach() {
+      return this.$store.getters.isCoach
+    },
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated
+    },
     filteredCoaches() {
       return this.coaches.filter(c => this.activeFilters.length === 0 || c.areas.some(a => this.activeFilters.map(a => a.toLowerCase()).includes(a.name.toLowerCase())))
     }

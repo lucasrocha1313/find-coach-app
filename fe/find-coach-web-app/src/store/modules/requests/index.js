@@ -25,23 +25,27 @@ export default {
 
                 context.commit('addRequest', response.data)
             } catch (error) {
-                if(error.status === 401)
+                if(error.status === 401) {
+                    context.rootState.isAuthenticated = false
                     throw new Error(`User is not authorized to send requests`)
+                }
 
                 throw new Error(`Failed to post requests to coach with status ${error.response.status}: ${error.response.statusText}`)
             }
         }
     },
     getters: {
-        async requests(state, _, _2, rootGetters) {
+        async requests(state, _, rootState, rootGetters) {
             try {
                 const response = await axios.get(`${process.env.VUE_APP_API_URL}/requests/${rootGetters.userId}`, {
                     headers: { Authorization: `Bearer ${rootGetters.token}` }
                 })
                 return response.data
             } catch (error) {
-                if(error.response.status === 401)
+                if(error.response.status === 401) {
+                    rootState.isAuthenticated = false
                     throw new Error(`User is not authorized to see the requests`)
+                }
 
                 throw new Error(`Failed to fetch requests to coach with status ${error.response.status}: ${error.response.statusText}`)
             }
