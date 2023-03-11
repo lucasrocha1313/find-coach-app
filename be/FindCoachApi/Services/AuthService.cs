@@ -23,6 +23,11 @@ public class AuthService: ServiceBase, IAuthService
         _config = config;
     }
 
+    public async Task<User?> GetUserByAuthId(int authId)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.AuthId == authId);
+    }
+
     public async Task<User> RegisterUser(User user)
     {
         if (_context.Users.Any(u => u.UserName == user.UserName))
@@ -64,10 +69,14 @@ public class AuthService: ServiceBase, IAuthService
             throw new InvalidLoginCredential("Credentials not valid!");
         }
 
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.AuthId == auth.Id) as Coach;
+        
+
         return new AuthResponseDto
         {
             AuthId = auth.Id,
-            Token = GenerateToken(email) ?? ""
+            Token = GenerateToken(email) ?? "",
+            IsCoach = user!= null
         };
     }
 

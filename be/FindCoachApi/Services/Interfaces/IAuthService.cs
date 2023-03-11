@@ -10,4 +10,5 @@ public interface IAuthService
     Task SignUp(string email, string password);
     Task<AuthResponseDto?> Login(string email, string password);
     Task<Auth?> GetAuthByEmailAsync(string email);
+    Task<User?> GetUserByAuthId(int authId);
 }

@@ -21,7 +21,8 @@ public class User
     public DateTime CreatedAt { get; set; }
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public DateTime UpdatedAt { get; set; }
-    
+
+
     [Required]
     public int AuthId { get; set; }
     public Auth Auth { get; set; }

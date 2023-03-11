@@ -23,16 +23,20 @@ public class RegisterController: ControllerBase
     [HttpPut]
     public async Task<ActionResult> Register([FromBody] RegisterDto registerDto)
     {
-
-        //TODO try catch user already exists
+        var userOnDb = await _authService.GetUserByAuthId(registerDto.AuthId);
 
         if (registerDto.IsCoach)
         {
+            if (userOnDb as Coach != null)
+            {
+                return BadRequest("Coach already registered for this authentication");
+            }
+
             if (!registerDto.IsValidCoach())
             {
-                //TODO return bad request
-                return BadRequest(registerDto);
+                return BadRequest("Invalid coach data");
             }
+
             var coach = new Coach
             {
                 UserName = registerDto.UserName,
@@ -50,6 +54,9 @@ public class RegisterController: ControllerBase
             
             return Ok(coach);
         }
+
+        if(userOnDb != null)
+            return BadRequest("User already registered for this authentication");
 
         var user = new User
         {

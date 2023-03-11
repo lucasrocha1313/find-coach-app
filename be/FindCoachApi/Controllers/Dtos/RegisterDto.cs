@@ -5,6 +5,8 @@ namespace FindCoachApi.Controllers.Dtos;
 public class RegisterDto
 {
     [Required]
+    public int AuthId { get; set; }
+    [Required]
     [StringLength(50, MinimumLength = 6, ErrorMessage = "The username value cannot exceed 50 and be lower than 6 characters.")]
     public string? UserName { get; set; }
     [Required]
