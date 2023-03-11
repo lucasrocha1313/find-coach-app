@@ -11,7 +11,7 @@
         <div class="controls">
           <base-button mode="outline" @click="getCoaches">Refresh</base-button>
           <base-button v-if="isAuthenticated && !isCoach && !isLoading" link to="/register">Register as a coach</base-button>
-          <base-button link to="/auth" v-if="!isAuthenticated">Login</base-button>
+          <base-button link to="/auth?redirect=register" v-if="!isAuthenticated">Login to register as a coach</base-button>
         </div>
         <div>
           <div v-if="isLoading">

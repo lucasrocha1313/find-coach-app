@@ -56,9 +56,10 @@ export default {
           await this.$store.dispatch('login', payload)
         } else {
           await this.$store.dispatch('signup', payload)
-          //TODO change backend to log the user in after signup
           this.mode = 'login'
         }
+
+        this.$router.replace(this.redirectUrl)
       }catch (error) {
         this.error = error.message || 'Something went wrong!'
       }
@@ -70,6 +71,9 @@ export default {
     }
   },
   computed: {
+    redirectUrl() {
+      return `/${this.$route.query.redirect || 'coaches'}`
+    },
     isEmailValid() {
       return String(this.email)
           .toLowerCase()
