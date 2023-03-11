@@ -39,6 +39,7 @@ public class RegisterController: ControllerBase
 
             var coach = new Coach
             {
+                AuthId = registerDto.AuthId,
                 UserName = registerDto.UserName,
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
@@ -60,6 +61,7 @@ public class RegisterController: ControllerBase
 
         var user = new User
         {
+            AuthId = registerDto.AuthId,
             UserName = registerDto.UserName,
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName
